@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Yakitori Tabetai</title>
+    <link rel="stylesheet" href="yakitori.css">
+  </head>
+<style>
+    body{
+          text-align:center;
+      
+    }
+  #input{
+    border: solid 4px;
+    position:fixed; 
+    width:50%;
+    height : 50px;
+    margin : 0 auto;
+    font-size:20pt;
+    bottom: 70px; 
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, .4);
+    
+  }    
+  #display{
+    border: groove 5px;
+    padding:10px;
+    position:fixed;
+    bottom:20px;
+    font-size:20pt;
+    left:30px
+  }
+  .hide{
+  z-index:-100;
+     left : 225%;   
+  }
+    .show{
+  z-index:100;
+      left : 30px;   
+  }
+  svg{
+    border: solid 4px;
+    z-index: 0;
+    left:0px;    
+  }
+  </style>
+  <body>
+        <h1>Yakitori Editor</h1>
+
+   <input class="hide" id="input"></input>
+   <div id="display"></div>
+  <svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" id="output">
+
+
+  </svg>
+    <script type="application/dart" src="yakitori.dart"></script>
+    <script src="packages/browser/dart.js"></script>
+  </body>
+</html>
+     
