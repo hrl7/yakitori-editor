@@ -1,23 +1,25 @@
 import 'dart:html';
-import 'docObject.dart';
 import 'commands.dart';
 var modeList = ["Normal Mode","Insert Mode","CommandLine Mode","Visual Mode","Search Mode"];
 int mode = 0;
 var testRect;
-List<docObject> targets = new List<docObject>();
-List<Command> history = new List<Command>();
-int layer=0;
 		
 var mainView = query("#output");
 var input = query("#input");
 var test3;
+var eval = new Evaluator(mainView);
+var ime;
+
 void main() {
 
 	input.onKeyPress.listen(keyDown);
+	//input.onKeyDown.listen((e)=>print("keyDowned"));
+	input.onKeyUp.listen(keyUp);
+
 	query("#display").text = modeList[0];
 
-
-	input.focus();
+	ime = input.getInputContext();
+/*
 	var test = new svgTextArea(mainView);
 	var test2 = new svgTextArea(mainView);
 	test3 = new svgTextArea(mainView);
@@ -45,6 +47,7 @@ void main() {
 	test3.update();
 	test3.changeChar(50);
 	test3.changeLine(1);
+*/	
 	window.onClick.listen(mouseClicked);
 	input.focus();
 	window.onMouseMove.listen(mouseMove);
@@ -78,55 +81,85 @@ void mouseMove(MouseEvent e){
 	input.focus();
 }
 
-void keyDown(KeyboardEvent e){
-	print(e.charCode);
-	String t = new String.fromCharCode(e.$dom_keyCode);
-	switch(t){
-		case 'h':
-			print(t);
-			var c = new move(test3,-1,0);
-			history.add(c);
-			c.execute();
-			break;
-		case 'j':
-			print(t);
-			var c = new move(test3,0,-1);
-			history.add(c);
-			c.execute();
-			break;
-		case 'k':
-			print(t);
-			var c = new move(test3,0,1);
-			history.add(c);
-			c.execute();
-			break;
-		case 'l':
-			print(t);
-			var c = new move(test3,1,0);
-			history.add(c);
-			c.execute();
-			break;
-		case 'n':
-			print(t);
-			var c = new move(test3,1,0);
-			history.add(c);
-			c.execute();
-			break;
-		case 'm':
-			print(t);
-			var c = new move(test3,1,0);
-			history.add(c);
-			c.execute();
-			break;
-		case 's':
-			for(final c in history)print(c.msg);
-			break;
-		default:
-			break;
+void keyUp(KeyboardEvent e){
+	print("upped: ${input.value} ${e.$dom_keyCode}");
+	String t = input.value;
+	if(e.ctrlKey){
+		switch(e.$dom_keyCode){
+			case 72:
+				eval.moveObj(-50,0);
+				break;
+			case 75:
+				eval.moveObj(0,-50);
+				break;
+			case 74:
+				eval.moveObj(0,50);
+				break;
+			case 76:
+				eval.moveObj(50,0);
+				break;
+			case 85:
+				eval.moveLayer(false);
+				break;
+			case 68:
+				eval.moveLayer(true);
+				break;
+			case 219:
+				modeChange(0);
+				break;
+			default:
+				break;
+		}
+	}else{
+		if(mode==0){
+			switch(t){
+				case 'mr':
+					eval.addObj("rect");
+					input.value="";	
+					break;
+				case 'mt':
+					eval.addObj("text");
+					input.value="";
+					break;	
+				case 'h':
+					eval.moveSelector(x:-1);
+					input.value="";
+					break;
+				case 'l':
+					eval.moveSelector(x:1);
+					input.value="";
+					break;
+				case 'j':
+					eval.moveSelector(y:1);
+					input.value="";
+					break;
+				case 'k':
+					eval.moveSelector(y:-1);
+					input.value="";
+					break;
+				case 'i':
+					modeChange(1);
+					input.value="";
+					break;
+				case 'x':
+					eval.edit();
+					input.value="";
+					break;
+				default:
+					if(eval.regExp(t))input.value="";
+					break;
+			}
+		}else if(mode == 1){
+			
+		}
 	}
 }
+
+void keyDown(KeyboardEvent e){
+	//print("keydown: ${e.charCode}");
+	String t = new String.fromCharCode(e.$dom_keyCode);
+
+}
 void mouseClicked(MouseEvent e){
-	testRect.absMove(e.clientX,e.clientY);
-	//testRect.select(!testRect.selected);
-	test3.deleteChars();
+
 }

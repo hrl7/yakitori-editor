@@ -33,10 +33,22 @@ abstract class docObject{
 	remove(){}
 
 	getArea(){}
-	h(){}
-	j(){}
-	k(){}
-	l(){}
+	h([int back=1]){
+
+	}
+	j([int down=1]){
+	}	
+	k([int up=1]){
+	}	
+	l([int forward=1]){
+	}
+
+}
+
+class rootObject extends docObject{
+	rootObject(){
+		print("init");
+	}
 }
 
 class svgTextArea extends docObject{
@@ -75,6 +87,29 @@ class svgTextArea extends docObject{
 
 
 	}
+	void insertChars(String t){
+		String fs, s = ownObjs[cLine].text;
+		fs = s.substring(0,cChar);
+		fs += t;
+		fs += s.substring(cChar);
+		ownObjs[cLine].text = fs;
+		if(cChar!=s.length)++cChar;
+		updateCursor();
+	}
+
+	void deleteChars([int d=1]){
+		if(ownObjs[cLine].text.length==1){
+			deleteLines(cLine);
+		}else {
+			if(d == ownObjs[cLine].text.length-1)changeChar(cChar-1);
+				String fs, s = ownObjs[cLine].text;
+				fs = s.substring(0,cChar);
+				fs += s.substring(cChar+d);
+				ownObjs[cLine].text = fs;	
+		}
+		updateCursor();
+	}
+
 	void h([int back=1]){
 		changeChar(cChar-back);
 	}
@@ -87,7 +122,7 @@ class svgTextArea extends docObject{
 	void l([int forward=1]){
 		changeChar(cChar+forward);
 	}
-
+	/*
 	void deleteChars([int d=1]){
 		if(ownObjs[cLine].s.text.length==1){
 			deleteLine(cLine);
@@ -102,13 +137,14 @@ class svgTextArea extends docObject{
 		}
 		updateCursor();
 
-	}
+	}*/
 
 	Rect getArea(){
 		var r = new Rect(x-marginX,
 					y-marginY,
 					area.client.width+marginX*2,
 					area.client.height+marginY*2);
+		print("rect $r");
 		return r;
 	}
 	select(bool _selected){
@@ -119,16 +155,16 @@ class svgTextArea extends docObject{
 	insertLine(int line,{String text,textLine target}){
 		if(text != null){
 			var s = new textLine(x,line*fontSize,text);
-			add(s,line);
+			_add(s,line);
 		}else if(target != null){
-			add(target,line);
+			_add(target,line);
 		}
 		addLineEnd(line);
 		update();
 	}
 
 
-	add(docObject target ,[int line = -1]){
+	_add(docObject target ,[int line = -1]){
 		++lines;
 		if(line != -1&&line <ownObjs.length){
 			ownObjs.insert(line,target);
@@ -151,6 +187,7 @@ class svgTextArea extends docObject{
 	   		a = tp.x.round();
 	    	b = tp.y.round()-fontSize;
 	    	c = ep.x.round()-a;
+	    	cursor.selected = selected;
 	 		cursor.setCursor(a,b,c,fontSize);
    		}
   	}
@@ -227,6 +264,7 @@ class textLine extends docObject{//this object is exist in svgTextArea or textLi
 }
 
 class rectangle extends docObject{
+	int selectObj = 0;
 	var rect = new svg.RectElement();
 	rectangle(var doc,{int tx:10,int ty:10,int twidth:100,int theight:100,docObject target}){
 		type ="rect";
@@ -247,14 +285,20 @@ class rectangle extends docObject{
 	}
 
 	move(int _x,int _y){
+		super.move(_x,_y);
 		for(final obj in ownObjs)obj.move(_x,_y);
 		update();
+		print("move");
 	}
 
 	absMove(int _x,int _y){
 		move(_x-x,_y-y);
 	}
-
+	docObject moveSeletor([bool fw=true]){
+		if(fw){
+			if(selectObj < ownObjs.length-1 )return ownObjs[++selectObj];
+		}else if(selectObj>0)return ownObjs[--selectObj];
+	}
 	update(){
 		chkArea();
 		rect.$dom_setAttribute("x","${x}px");
@@ -281,7 +325,8 @@ class rectangle extends docObject{
 			_h = ownObjs[0].getArea().bottomRight.y;
 			
 			if(ownObjs.length >0){
-				for(var i=1;i<ownObjs.length;++i){
+				for(var i=0;i<ownObjs.length;++i){
+					print("getArea ${ownObjs[i]} $i");
 					if(ownObjs[i].getArea().left<_x)_x=ownObjs[i].getArea().left;
 					if(ownObjs[i].getArea().top<_y)_y=ownObjs[i].getArea().top;
 					if(ownObjs[i].getArea().bottomRight.x>_w)_w=ownObjs[i].getArea().bottomRight.x;
@@ -337,7 +382,7 @@ class textCursor{
    		rec.$dom_setAttribute("y","${y}px");
    		rec.$dom_setAttribute("width","${dx}px");
    		rec.$dom_setAttribute("height","${dy}px");
-   		
+   		print("selected $selected");
    		if(selected){
 	    	rec.$dom_setAttribute("fill-opacity","0.1");
 	    	rec.$dom_setAttribute("stroke-opacity","0.9");
