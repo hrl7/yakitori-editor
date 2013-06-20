@@ -109,7 +109,14 @@ class Evaluator{
 	}
 	insertChar(String text){
 		if(targets[layer].type == "textArea"){
-			targets[layer].insertChar("text");
+			targets[layer].insertChars(text);
+		}
+	}
+	deleteChar(){
+		if(targets[layer].type == "textArea"){
+			targets[layer].deleteChars();
+			targets[layer].h();
+
 		}
 	}
 

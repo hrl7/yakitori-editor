@@ -88,24 +88,25 @@ class svgTextArea extends docObject{
 
 	}
 	void insertChars(String t){
-		String fs, s = ownObjs[cLine].text;
+		print( ownObjs[cLine].s.text);
+		String fs, s = ownObjs[cLine].s.text;
 		fs = s.substring(0,cChar);
 		fs += t;
 		fs += s.substring(cChar);
-		ownObjs[cLine].text = fs;
+		ownObjs[cLine].s.text = fs;
 		if(cChar!=s.length)++cChar;
 		updateCursor();
 	}
 
 	void deleteChars([int d=1]){
-		if(ownObjs[cLine].text.length==1){
+		if(ownObjs[cLine].s.text.length==1){
 			deleteLines(cLine);
 		}else {
-			if(d == ownObjs[cLine].text.length-1)changeChar(cChar-1);
-				String fs, s = ownObjs[cLine].text;
+			if(d == ownObjs[cLine].s.text.length-1)changeChar(cChar-1);
+				String fs, s = ownObjs[cLine].s.text;
 				fs = s.substring(0,cChar);
 				fs += s.substring(cChar+d);
-				ownObjs[cLine].text = fs;	
+				ownObjs[cLine].s.text = fs;	
 		}
 		updateCursor();
 	}

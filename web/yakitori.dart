@@ -150,7 +150,12 @@ void keyUp(KeyboardEvent e){
 					break;
 			}
 		}else if(mode == 1){
-			
+			if(e.$dom_keyCode == 8){
+				eval.deleteChar();
+			}else{
+				eval.insertChar(input.value);
+				input.value="";
+			}
 		}
 	}
 }
