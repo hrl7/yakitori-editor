@@ -88,27 +88,44 @@ class svgTextArea extends docObject{
 
 	}
 	void insertChars(String t){
-		print( ownObjs[cLine].s.text);
-		String fs, s = ownObjs[cLine].s.text;
-		fs = s.substring(0,cChar);
-		fs += t;
-		fs += s.substring(cChar);
-		ownObjs[cLine].s.text = fs;
-		if(cChar!=s.length)++cChar;
-		updateCursor();
+		if(ownObjs[cLine].s.text=="_"){
+			ownObjs[cLine].s.text=t+"_";
+			changeChar(1);
+		}else if(cChar == ownObjs[cLine].s.text.length-2){
+			String s = ownObjs[cLine].s.text;
+			s = s.substring(0,cChar+1);
+			s += t + "_";
+			ownObjs[cLine].s.text = s;
+			changeChar(cChar+1);
+			updateCursor();	
+			print("last selected");
+
+		}else{
+			String fs, s = ownObjs[cLine].s.text;
+			fs = s.substring(0,cChar);
+			fs += t;
+			fs += s.substring(cChar);
+			ownObjs[cLine].s.text = fs;
+			if(cChar!=s.length)++cChar;
+			updateCursor();
+		}
 	}
 
 	void deleteChars([int d=1]){
-		if(ownObjs[cLine].s.text.length==1){
-			deleteLines(cLine);
-		}else {
-			if(d == ownObjs[cLine].s.text.length-1)changeChar(cChar-1);
-				String fs, s = ownObjs[cLine].s.text;
-				fs = s.substring(0,cChar);
-				fs += s.substring(cChar+d);
-				ownObjs[cLine].s.text = fs;	
+		if(false){
+
+		}else{
+			if(ownObjs[cLine].s.text.length==1){
+				deleteLine(cLine);
+			}else {
+				if(d == ownObjs[cLine].s.text.length-1)changeChar(cChar-1);
+					String fs, s = ownObjs[cLine].s.text;
+					fs = s.substring(0,cChar);
+					fs += s.substring(cChar+d);
+					ownObjs[cLine].s.text = fs;	
+			}
+			updateCursor();
 		}
-		updateCursor();
 	}
 
 	void h([int back=1]){
@@ -123,22 +140,6 @@ class svgTextArea extends docObject{
 	void l([int forward=1]){
 		changeChar(cChar+forward);
 	}
-	/*
-	void deleteChars([int d=1]){
-		if(ownObjs[cLine].s.text.length==1){
-			deleteLine(cLine);
-
-		}else{
-			while(d+cChar >= ownObjs[cLine].s.text.length)changeChar(cChar-1);
-				String fs, s = ownObjs[cLine].s.text;
-				fs = s.substring(0,cChar);
-				fs += s.substring(cChar+d);
-				area.children[cLine].text = fs;
-			
-		}
-		updateCursor();
-
-	}*/
 
 	Rect getArea(){
 		var r = new Rect(x-marginX,
@@ -163,7 +164,14 @@ class svgTextArea extends docObject{
 		addLineEnd(line);
 		update();
 	}
+	returnLine(){
+		String fs, s = ownObjs[cLine].s.text;
+		fs = s.substring(cChar);
+		ownObjs[cLine].s.text = fs;
+		addLineEnd(cLine);
+		insertLine(cLine,text:s.substring(0,cChar));
 
+	}
 
 	_add(docObject target ,[int line = -1]){
 		++lines;

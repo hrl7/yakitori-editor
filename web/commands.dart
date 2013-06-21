@@ -119,6 +119,13 @@ class Evaluator{
 
 		}
 	}
+	returnLine(){
+		if(targets[layer].type == "textArea"){
+			targets[layer].returnLine();
+			targets[layer].j();
+
+		}
+	}
 
 }
 abstract class Command{

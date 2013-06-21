@@ -51,6 +51,7 @@ void main() {
 	window.onClick.listen(mouseClicked);
 	input.focus();
 	window.onMouseMove.listen(mouseMove);
+
 }
 
 void cmdEval(int cmd){
@@ -142,7 +143,8 @@ void keyUp(KeyboardEvent e){
 					input.value="";
 					break;
 				case 'x':
-					eval.edit();
+					eval.moveSelector(x:1);
+					eval.deleteChar();
 					input.value="";
 					break;
 				default:
@@ -152,6 +154,8 @@ void keyUp(KeyboardEvent e){
 		}else if(mode == 1){
 			if(e.$dom_keyCode == 8){
 				eval.deleteChar();
+			}else if(e.$dom_keyCode == 13){
+				eval.returnLine();
 			}else{
 				eval.insertChar(input.value);
 				input.value="";
